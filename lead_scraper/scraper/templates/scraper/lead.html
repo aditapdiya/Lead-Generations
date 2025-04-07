@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leads List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        table {
+            width: 80%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Scraped Leads</h1>
+
+    <!-- Scrape New Leads Button -->
+    <form method="POST">
+        {% csrf_token %}
+        <button type="submit">Scrape New Leads</button>
+    </form>
+
+    <!-- Table to Display Leads -->
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Lead Name</th>
+                <th>Profile Link</th>
+                <th>Source</th>
+                <th>email</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lead in leads %}
+                <tr>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ lead.name }}</td>
+                    <td><a href="{{ lead.profile_link }}" target="_blank">{{ lead.profile_link }}</a></td>
+                    <td>{{ lead.source }}</td>
+                    <td>{{ lead.email }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">No leads found.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
