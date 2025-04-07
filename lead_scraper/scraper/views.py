@@ -5,17 +5,12 @@ from .models import Lead
 import requests
 from bs4 import BeautifulSoup
 import os
-import re  # ✅ Make sure re is imported
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
-import time
+import re 
 
 API_KEY = os.getenv("GOOGLE_API_KEY")
 CSE_ID = os.getenv("GOOGLE_CSE_ID")
 
-# 🔍 Google Search Scraper
+
 def scrape_google():
     query = "best python courses for students site:quora.com OR site:reddit.com OR site:stackoverflow.com OR site:linkedin.com"
     search_url = f"https://www.googleapis.com/customsearch/v1?q={query}&key={API_KEY}&cx={CSE_ID}&dateRestrict=m1"
@@ -43,7 +38,7 @@ def scrape_google():
         print(f"Error scraping Google: {e}")
 
 
-# Email Extractor
+
 def extract_email_from_url(url):
     try:
         headers = {'User-Agent': 'Mozilla/5.0'}
@@ -64,53 +59,13 @@ def extract_email_from_url(url):
         return None
 
 
-# Coursera Scraper
-def scrape_coursera():
-    url = "https://www.coursera.org/learn/python/reviews"
-    
-    options = Options()
-    options.add_argument("--headless")
-    options.add_argument("--disable-gpu")
-    options.add_argument("--no-sandbox")
-
-    service = Service(ChromeDriverManager().install())
-    driver = webdriver.Chrome(service=service, options=options)
-
-    try:
-        driver.get(url)
-        time.sleep(5)
-
-        soup = BeautifulSoup(driver.page_source, "html.parser")
-        driver.quit()
-
-        reviews = soup.find_all("div", class_="review-text")
-        reviewers = soup.find_all("div", class_="reviewerName")
-
-        for i, review in enumerate(reviews[:5]):
-            review_text = review.text.strip()
-            reviewer_name = reviewers[i].text.strip() if i < len(reviewers) else "Anonymous"
-
-            if not Lead.objects.filter(name=review_text).exists():
-                Lead.objects.create(
-                    name=reviewer_name,
-                    profile_link=url,
-                    source="Coursera",
-                    email=None
-                )
-
-    except Exception as e:
-        print(f"Error scraping Coursera: {e}")
-        driver.quit()
-
-
-#  View to Show and Refresh Leads
 def show_leads(request):
     if request.method == "POST":
         scrape_google()
-        # scrape_coursera()
+        
         return redirect("show_leads")
 
-    # Show only recent leads
+    
     thirty_days_ago = now() - timedelta(days=30)
     fresh_leads = Lead.objects.filter(created_at__gte=thirty_days_ago)
 
