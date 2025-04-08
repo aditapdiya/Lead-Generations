@@ -10,14 +10,18 @@ import openpyxl
 from django.http import HttpResponse
 from .forms import CourseForm
 from django.shortcuts import get_object_or_404
-
+import datetime
 API_KEY = os.getenv("GOOGLE_API_KEY")
 CSE_ID = os.getenv("GOOGLE_CSE_ID")
 
+
+
+#hello this is a new update
 def scrape_google():
+    current_year = datetime.datetime.now().year
     courses = Course.objects.all()
     for course in courses:
-        query = f"best {course} courses for students site:quora.com OR site:reddit.com OR site:stackoverflow.com OR site:linkedin.com"
+        query =  f"best {course} courses for students of {current_year} site:quora.com OR site:reddit.com OR site:stackoverflow.com OR site:linkedin.com"
         search_url = f"https://www.googleapis.com/customsearch/v1?q={query}&key={API_KEY}&cx={CSE_ID}&dateRestrict=m1"
         
         try:
