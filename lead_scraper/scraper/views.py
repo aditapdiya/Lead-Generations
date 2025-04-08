@@ -14,9 +14,6 @@ import datetime
 API_KEY = os.getenv("GOOGLE_API_KEY")
 CSE_ID = os.getenv("GOOGLE_CSE_ID")
 
-# hello 
-#hello aditya
-#hello this is a new update
 def scrape_google():
     current_year = datetime.datetime.now().year
     courses = Course.objects.all()
