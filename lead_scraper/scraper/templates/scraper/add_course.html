@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
 </head>
 <body class="bg-light">
+
     <div class="container py-5">
         <div class="card shadow-sm p-4">
             <h2 class="mb-4">Add a New Course</h2>
@@ -34,5 +35,22 @@
             {% endif %}
         </div>
     </div>
+
+    <!-- Toast Notification for New Leads -->
+    {% if new_lead_count %}
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="toastLead" class="toast align-items-center text-bg-success border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    ✅ {{ new_lead_count }} new lead{{ new_lead_count|pluralize }} added successfully!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -17,6 +17,8 @@ CSE_ID = os.getenv("GOOGLE_CSE_ID")
 def scrape_google():
     current_year = datetime.datetime.now().year
     courses = Course.objects.all()
+    new_lead_count = 0  # Track new leads
+
     for course in courses:
         query =  f"best {course} courses for students of {current_year} site:quora.com OR site:reddit.com OR site:stackoverflow.com OR site:linkedin.com"
         search_url = f"https://www.googleapis.com/customsearch/v1?q={query}&key={API_KEY}&cx={CSE_ID}&dateRestrict=m1"
@@ -40,8 +42,12 @@ def scrape_google():
                             source="Google Search",
                             email=email if email else None
                         )
+                        new_lead_count += 1  # Count this as a new lead
         except requests.exceptions.RequestException as e:
             print(f"Error scraping Google: {e}")
+
+    return new_lead_count
+
 
 def extract_email_from_url(url):
     try:
@@ -62,11 +68,17 @@ def extract_email_from_url(url):
 
 def show_leads(request):
     if request.method == "POST":
-        scrape_google()
+        new_leads = scrape_google()
+        request.session['new_lead_count'] = new_leads
         return redirect("show_leads")
+
+    new_lead_count = request.session.pop('new_lead_count', None)
+
     thirty_days_ago = now() - timedelta(days=30)
-    fresh_leads = Lead.objects.filter(created_at__gte=thirty_days_ago)
-    return render(request, "scraper/lead.html", {"leads": fresh_leads})
+    fresh_leads = Lead.objects.filter(created_at__gte=thirty_days_ago).order_by('-created_at')
+
+    return render(request, "scraper/lead.html", {"leads": fresh_leads, "new_lead_count": new_lead_count})
+
 
 def export_today_leads_excel(request):
     today = now().date()
