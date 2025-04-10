@@ -14,3 +14,8 @@ urlpatterns = [
     path('delete-course/<int:course_id>/', views.delete_course, name='delete_course'),
 ]
 
+from .views import register
+
+urlpatterns += [
+    path("register/", register, name="register"),
+]

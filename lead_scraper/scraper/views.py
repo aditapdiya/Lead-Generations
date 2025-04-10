@@ -165,3 +165,17 @@ def delete_course(request, course_id):
         course.delete()
         return redirect('add_course')
     return render(request, 'scraper/delete_course.html', {'course': course})
+
+from .forms import RegisterForm
+from django.contrib.auth.models import User
+
+def register(request):
+    if request.method == "POST":
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Registration successful. You can now log in.")
+            return redirect("login")
+    else:
+        form = RegisterForm()
+    return render(request, "scraper/register.html", {"form": form})
