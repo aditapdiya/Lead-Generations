@@ -1,3 +1,5 @@
+# scraper/view.py
+
 from django.shortcuts import render, redirect
 from django.utils.timezone import now
 from datetime import timedelta
@@ -11,8 +13,36 @@ from django.http import HttpResponse
 from .forms import CourseForm
 from django.shortcuts import get_object_or_404
 import datetime
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+
 API_KEY = os.getenv("GOOGLE_API_KEY")
 CSE_ID = os.getenv("GOOGLE_CSE_ID")
+
+
+
+def user_login(request):
+    if request.method == "POST":
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user:
+            login(request, user)
+            return redirect('show_leads')  # redirect to leads after login
+        else:
+            messages.error(request, "Invalid username or password.")
+    
+    return render(request, 'scraper/login.html')
+
+
+@login_required
+def user_logout(request):
+    logout(request)
+    return redirect('login')  # back to login page
+
 
 def scrape_google():
     current_year = datetime.datetime.now().year
@@ -65,7 +95,9 @@ def extract_email_from_url(url):
     except Exception as e:
         print(f"Error extracting email from {url}: {e}")
         return None
+    
 
+@login_required
 def show_leads(request):
     if request.method == "POST":
         new_leads = scrape_google()
@@ -79,7 +111,7 @@ def show_leads(request):
 
     return render(request, "scraper/lead.html", {"leads": fresh_leads, "new_lead_count": new_lead_count})
 
-
+@login_required
 def export_today_leads_excel(request):
     today = now().date()
     today_leads = Lead.objects.filter(created_at__date=today)
@@ -96,6 +128,7 @@ def export_today_leads_excel(request):
     workbook.save(response)
     return response
 
+@login_required
 def add_course(request):
     if request.method == "POST":
         form = CourseForm(request.POST)

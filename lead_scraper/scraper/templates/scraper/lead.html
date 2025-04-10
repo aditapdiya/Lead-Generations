@@ -150,6 +150,11 @@
         <form method="get" action="{% url 'add_course' %}">
             <button type="submit">Add Course</button>
         </form>
+
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" style="background-color: #dc3545;">Logout</button>
+        </form>
     </div>
 
     <!-- Main Content -->

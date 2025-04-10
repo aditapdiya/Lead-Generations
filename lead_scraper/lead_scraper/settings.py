@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'scraper',
+    
 ]
 
 MIDDLEWARE = [
@@ -120,6 +121,8 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/leads/'  # or any default page after login
 
 
 # Static files (CSS, JavaScript, Images)
@@ -131,3 +134,4 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+

@@ -1,3 +1,5 @@
+# scraper/model.py
+
 from django.db import models
 
 class Lead(models.Model):
