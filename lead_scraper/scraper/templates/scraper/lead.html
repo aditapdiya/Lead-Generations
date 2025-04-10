@@ -1,3 +1,5 @@
+
+<!-- lead.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -161,17 +163,20 @@
     <div class="content">
         <h1>Scraped Leads</h1>
         <table>
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Lead Name</th>
-                    <th>Profile Link</th>
-                    <th>Source</th>
-                    <th>Email</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for lead in leads %}
+            {% for date, leads in grouped_leads.items %}
+            <h3 style="margin-top: 40px; color: #030f27;">Leads for {{ date }} ({{ leads|length }})</h3>
+            <table class="mb-5">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Lead Name</th>
+                        <th>Profile Link</th>
+                        <th>Source</th>
+                        <th>Email</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for lead in leads %}
                     <tr>
                         <td>{{ forloop.counter }}</td>
                         <td>{{ lead.name }}</td>
@@ -179,12 +184,13 @@
                         <td>{{ lead.source }}</td>
                         <td>{{ lead.email }}</td>
                     </tr>
-                {% empty %}
-                    <tr>
-                        <td colspan="5">No leads found.</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% empty %}
+            <p>No leads found.</p>
+        {% endfor %}
+        
         </table>
     </div>
 

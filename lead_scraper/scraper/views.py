@@ -97,6 +97,8 @@ def extract_email_from_url(url):
         return None
     
 
+from collections import defaultdict
+
 @login_required
 def show_leads(request):
     if request.method == "POST":
@@ -105,11 +107,21 @@ def show_leads(request):
         return redirect("show_leads")
 
     new_lead_count = request.session.pop('new_lead_count', None)
-
     thirty_days_ago = now() - timedelta(days=30)
     fresh_leads = Lead.objects.filter(created_at__gte=thirty_days_ago).order_by('-created_at')
 
-    return render(request, "scraper/lead.html", {"leads": fresh_leads, "new_lead_count": new_lead_count})
+    grouped_leads = defaultdict(list)
+    for lead in fresh_leads:
+        date_str = lead.created_at.strftime('%Y-%m-%d')
+        grouped_leads[date_str].append(lead)
+
+    sorted_leads_by_day = dict(sorted(grouped_leads.items(), reverse=True))  # latest date first
+
+    return render(request, "scraper/lead.html", {
+        "grouped_leads": sorted_leads_by_day,
+        "new_lead_count": new_lead_count
+    })
+
 
 @login_required
 def export_today_leads_excel(request):
