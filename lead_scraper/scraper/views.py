@@ -121,8 +121,6 @@ def show_leads(request):
         "grouped_leads": sorted_leads_by_day,
         "new_lead_count": new_lead_count
     })
-
-
 @login_required
 def export_today_leads_excel(request):
     today = now().date()
@@ -134,12 +132,10 @@ def export_today_leads_excel(request):
     
     for lead in today_leads:
         sheet.append([lead.name, lead.profile_link, lead.source, lead.email, lead.created_at.strftime('%Y-%m-%d %H:%M')])
-
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
     response['Content-Disposition'] = 'attachment; filename=today_leads.xlsx'
     workbook.save(response)
     return response
-
 @login_required
 def add_course(request):
     if request.method == "POST":
@@ -152,7 +148,6 @@ def add_course(request):
     
     courses = Course.objects.all()  
     return render(request, "scraper/add_course.html", {"form": form, "courses": courses})
-
 def update_course(request, course_id):
     course = get_object_or_404(Course, id=course_id)
     if request.method == 'POST':
