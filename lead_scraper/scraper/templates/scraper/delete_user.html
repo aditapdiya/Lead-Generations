@@ -1,0 +1,14 @@
+{% extends "scraper/base.html" %}
+
+{% block content %}
+  <div class="confirmation-container">
+    <h2 class="confirmation-heading">Are you sure you want to delete user "{{ user_obj.username }}"?</h2>
+    <form method="post" class="confirmation-form">
+        {% csrf_token %}
+        <div class="form-buttons">
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+            <a href="{% url 'manage_users' %}" class="btn btn-cancel">Cancel</a>
+        </div>
+    </form>
+  </div>
+{% endblock %}

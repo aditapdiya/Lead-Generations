@@ -1,0 +1,26 @@
+{% extends "scraper/base.html" %}
+{% block content %}
+<h2 class="mb-4">Manage Users</h2>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+    {% for user in users %}
+    <div class="col">
+        <div class="card h-100 shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title">{{ user.username }}</h5>
+                <p class="card-text">
+                    <strong>Email:</strong> {{ user.email }}<br>
+                    <strong>Joined:</strong> {{ user.date_joined|date:"F j, Y" }}
+                </p>
+            </div>
+            <div class="card-footer bg-transparent border-top-0 d-flex justify-content-between">
+                <a href="{% url 'update_user' user.id %}" class="btn btn-sm btn-primary">Edit</a>
+                <a href="{% url 'delete_user' user.id %}" class="btn btn-sm btn-danger">Delete</a>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <p>No users found.</p>
+    {% endfor %}
+</div>
+{% endblock %}

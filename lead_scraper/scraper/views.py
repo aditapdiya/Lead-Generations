@@ -199,3 +199,49 @@ def delete_course(request, course_id):
         course.delete()
         return redirect('add_course')
     return render(request, 'scraper/delete_course.html', {'course': course})
+
+
+
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserChangeForm
+
+@login_required
+def manage_users(request):
+    users = User.objects.all().order_by('-date_joined')
+    return render(request, "scraper/manage_users.html", {"users": users})
+
+
+# views.py
+from django.contrib.auth.models import User
+from django import forms
+
+class UserUpdateForm(forms.ModelForm):
+    is_active = forms.BooleanField(required=False, label="Is Active")  # Add this manually
+
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'email', 'is_active']
+
+
+def update_user(request, user_id):
+    user_obj = User.objects.get(id=user_id)
+    if request.method == 'POST':
+        form = UserUpdateForm(request.POST, instance=user_obj)
+        if form.is_valid():
+            form.save()
+            # Redirect after save
+    else:
+        form = UserUpdateForm(instance=user_obj)
+    
+    return render(request, 'scraper/update_user.html', {'form': form, 'user_obj': user_obj})
+
+
+
+@login_required
+def delete_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    if request.method == 'POST':
+        user.delete()
+        messages.success(request, "User deleted successfully.")
+        return redirect('manage_users')
+    return render(request, 'scraper/delete_user.html', {'user_obj': user})

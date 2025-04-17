@@ -134,6 +134,9 @@
         <form method="get" action="{% url 'add_course' %}">
             <button type="submit">Add Course</button>
         </form>
+        <form action="{% url 'manage_users' %}">
+            <button type="submit"> Manage Users</button>
+        </form>
 
         <form method="post" action="{% url 'logout' %}">
             {% csrf_token %}
